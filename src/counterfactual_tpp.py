@@ -28,7 +28,7 @@ def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity
             counterfactual_indicators.append(True)
         else:
             counterfactual_indicators.append(False)
-    return counterfactuals
+    return counterfactuals, counterfactual_indicators
 
 
 def superposition(lambda_max, original_intensity, mean, number_of_samples):
