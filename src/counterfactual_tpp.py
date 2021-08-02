@@ -1,6 +1,6 @@
 import numpy as np
-from gumbel import posterior_A_star
-from sampling_utils import return_samples
+from src.gumbel import posterior_A_star
+from src.sampling_utils import return_samples
 
 
 def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity):
