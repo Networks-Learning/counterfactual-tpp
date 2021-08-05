@@ -1,5 +1,5 @@
 import numpy as np
-from src.gumbel import posterior_A_star
+from src.gumbel import posterior_A_star, posterior2
 from src.sampling_utils import return_samples
 
 
@@ -18,7 +18,7 @@ def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity
     for i in range(len(sample)):
         ups = []
         for j in range(k):
-            post = posterior_A_star(0, lambdas, lambda_max, indicators)
+            post = posterior_A_star(i, lambdas, lambda_max, indicators)
             pp_1 = new_intensity(sample[i])/lambda_max
             pp_0 = 1 - pp_1
             up = np.argmax(np.log(np.array([pp_0, pp_1])) + post)
