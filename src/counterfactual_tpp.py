@@ -65,3 +65,19 @@ def combine(h_observed, lambda_observed, h_rejected, original_intensity):
     sample = np.array(sample)
     lambdas = np.array(lambdas)
     return sample, lambdas, indicators
+
+def check_monotonicity(sample, counterfactuals, original_intensity, intervened_intensity, accepted):
+    monotonic = 1
+    for s in sample:
+        if intervened_intensity(s) >= original_intensity(s) and s in accepted:
+            if s not in counterfactuals:
+                print('NOT  MONOTONIC')
+                monotonic = 0
+    for s in sample:
+        if intervened_intensity(s) < original_intensity(s) and s not in accepted:
+            if s in counterfactuals:
+                print('NOT  MONOTONIC')
+                monotonic = 0
+    if monotonic == 1:
+        print('MONOONIC')
+    
