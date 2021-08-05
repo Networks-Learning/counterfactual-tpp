@@ -1,4 +1,4 @@
-# This code is taken from: https://github.com/Networks-Learning/jetbrains-seminar-2019/blob/hawkes-solution/hawkes/simPointProcess_solution.py
+# This code is taken from (with required modifications): https://github.com/Networks-Learning/jetbrains-seminar-2019/blob/hawkes-solution/hawkes/simPointProcess_solution.py
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -10,7 +10,7 @@ def sampleHawkes(lambda_0, alpha_0, w, T, Nev, seed=None):
     """Generates samples from a Hawkes process with \lambda_0 and \alpha_0 until one of the following happens:
       - The next generated event is after T
       - Nev events have been generated.
-    Returns: a tuple with the event times and the last generated time.
+    Returns: a tuple with the event times and the last generated time and their intensity values.
     """
 
     np.random.seed(seed)
@@ -47,62 +47,40 @@ def sampleHawkes(lambda_0, alpha_0, w, T, Nev, seed=None):
         Tend = tev[-1]
     else:
         Tend = T
+    lambdas = hawkes(tev, lambda_0, alpha_0, w)
 
-    return tev, Tend
+    return tev, Tend, lambdas
 
 
-def preprocessEv(tev, T, w):
+def hawkes(tev, l_0, alpha_0, w):
+    # calculates the value of intensity for a series of samples (i.e., tev)
     lambda_ti = np.zeros_like(tev, dtype=float)
-    survival = 0
-
     for i in range(len(tev)):
-        lambda_ti[i] = np.sum(np.exp(-w * (tev[i] - tev[0:i])))
-        survival += (1.0 / w) * (1.0 - np.exp(-w * (T - tev[i])))
-
-    return lambda_ti, survival
+        lambda_ti[i] = l_0 + alpha_0 * np.sum(np.exp(-w * (tev[i] - tev[0:i])))
+    return lambda_ti
 
 
 def plotHawkes(tevs, l_0, alpha_0, w, T, resolution):
+    plt.figure(figsize=(10, 8))
     tvec = np.arange(0, T, step=T / resolution)
 
     # Expected intensity given parameters
     lambda_t = (np.exp((alpha_0 - w) * tvec) + w * (1.0 / (alpha_0 - w)) *
                 (np.exp((alpha_0 - w) * tvec) - 1)) * l_0
 
-    # Empirical average of intensities
-    lambda_t_emp = np.zeros(len(tvec))
+    n = -1
+    l_t = np.zeros(len(tvec))
+    for t in tvec:
+        n += 1
+        l_t[n] = l_0 + alpha_0 * np.sum(np.exp(-w * (t - tevs[tevs < t])))
 
-    # Plot individual lambda(t) for each event sequence
-    colorLambda = ['r--', 'k--', 'g--', 'm--', 'c--']
-    colorEv = ['r+', 'k+', 'g+', 'm+', 'c+']
+    plt.plot(tvec, l_t)
 
-    for i in range(len(tevs)):
-        n = -1
-        l_t = np.zeros(len(tvec))
-
-        for t in tvec:
-            n += 1
-            l_t[n] = l_0 + alpha_0 * \
-                np.sum(np.exp(-w * (t - tevs[i][tevs[i] < t])))
-
-        plt.plot(tvec, l_t, colorLambda[i % len(colorLambda)],
-                 alpha=10 * 1. / len(tevs))
-
-        plt.plot(tevs[i], np.zeros(len(tevs[i])), colorEv[i % len(colorEv)],
-                 alpha=10 * 1. / len(tevs))
-
-        lambda_t_emp += l_t
-
-    # Take average of lambda_t at all time instances
-    lambda_t_emp /= len(tevs)
+    plt.plot(tevs, np.zeros(len(tevs)), 'r+')
 
     # Plot expected mean intensity
     plt.plot(tvec, lambda_t, 'b-', linewidth=1.5, alpha=0.75,
              label=r'$\mathbb{E}[\lambda(t)]$')
-
-    # Plot empirical mean intensity
-    plt.plot(tvec, lambda_t_emp, 'b:', linewidth=1.5, alpha=0.75,
-             label=r'$\bar{\lambda}(t)$')
 
     # Labels
     plt.xlabel('Time ($t$)')
@@ -110,9 +88,7 @@ def plotHawkes(tevs, l_0, alpha_0, w, T, resolution):
     plt.legend()
 
 
-##################################################
-
-
+##############################################################
 # Simulation time
 T = 10
 
@@ -128,18 +104,8 @@ alpha_0 = 0.5
 # Rate of decay
 w = 1
 
-# Number of samples to take
-Nsamples = 20
-
-tev = [None] * Nsamples
-Tend = [None] * Nsamples
-lambda_ti = [None] * Nsamples
-survival = np.zeros(Nsamples)
-
-for i in range(Nsamples):
-    tev[i], Tend[i] = sampleHawkes(lambda_0, alpha_0, w, T, maxNev)
-    lambda_ti[i], survival[i] = preprocessEv(tev[i], Tend[i], w)
-
+tev, tend, lambdas = sampleHawkes(lambda_0, alpha_0, w, T, maxNev)
 plotHawkes(tev, lambda_0, alpha_0, w, T, 10000.0)
-plt.ion()   # Make the plot interactive
-plt.show()  # Show the plot. May not be needed in IPython
+plt.plot(tev, lambdas, 'r^')
+plt.ion()
+plt.show()  # Show the plot.
