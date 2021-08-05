@@ -79,5 +79,5 @@ def check_monotonicity(sample, counterfactuals, original_intensity, intervened_i
                 print('NOT  MONOTONIC')
                 monotonic = 0
     if monotonic == 1:
-        print('MONOONIC')
+        print('MONOTONIC')
     
