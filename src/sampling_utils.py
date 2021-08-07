@@ -33,7 +33,9 @@ def thinning(lambdas, lambda_max, sample):
 # INVERSION SAMPLING
 def inverse_sample(g, mean):
     x = np.linspace(0, 2 * mean, 100000)
-    y = g(x)                        # probability density function, pdf
+    y = np.zeros(x.shape)
+    for i in range(len(y)):
+        y[i] = g(x[i])              # probability density function, pdf
     cdf_y = np.cumsum(y)            # cumulative distribution function, cdf
     cdf_y = cdf_y/cdf_y.max()       # takes care of normalizing cdf to 1.0
     inverse_cdf = interpolate.interp1d(cdf_y, x)    # this is a function

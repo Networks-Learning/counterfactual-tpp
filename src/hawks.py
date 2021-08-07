@@ -60,13 +60,13 @@ def hawkes(tev, l_0, alpha_0, w):
     return lambda_ti
 
 
-def plotHawkes(tevs, l_0, alpha_0, w, T, resolution):
-    plt.figure(figsize=(10, 8))
-    tvec = np.arange(0, T, step=T / resolution)
+def hawkes_calculate(x, tev, l_0, alpha_0, w):
+    return l_0 + alpha_0 * np.sum(np.exp(-w * (x - tev[tev < x])))
 
-    # Expected intensity given parameters
-    lambda_t = (np.exp((alpha_0 - w) * tvec) + w * (1.0 / (alpha_0 - w)) *
-                (np.exp((alpha_0 - w) * tvec) - 1)) * l_0
+
+def plotHawkes(tevs, l_0, alpha_0, w, T, resolution, label):
+
+    tvec = np.arange(0, T, step=T / resolution)
 
     n = -1
     l_t = np.zeros(len(tvec))
@@ -74,18 +74,10 @@ def plotHawkes(tevs, l_0, alpha_0, w, T, resolution):
         n += 1
         l_t[n] = l_0 + alpha_0 * np.sum(np.exp(-w * (t - tevs[tevs < t])))
 
-    plt.plot(tvec, l_t)
+    plt.plot(tvec, l_t, label=label)
 
     plt.plot(tevs, np.zeros(len(tevs)), 'r+')
-
-    # Plot expected mean intensity
-    plt.plot(tvec, lambda_t, 'b-', linewidth=1.5, alpha=0.75,
-             label=r'$\mathbb{E}[\lambda(t)]$')
-
-    # Labels
-    plt.xlabel('Time ($t$)')
-    plt.ylabel(r'$\lambda_0(t), \dots, \lambda_{%d}(t)$' % (len(tevs),))
-    plt.legend()
+    return tvec, l_t
 
 
 ##############################################################
@@ -105,7 +97,7 @@ alpha_0 = 0.5
 w = 1
 
 tev, tend, lambdas = sampleHawkes(lambda_0, alpha_0, w, T, maxNev)
-plotHawkes(tev, lambda_0, alpha_0, w, T, 10000.0)
+plotHawkes(tev, lambda_0, alpha_0, w, T, 10000.0, label='test')
 plt.plot(tev, lambdas, 'r^')
 plt.ion()
 plt.show()  # Show the plot.
