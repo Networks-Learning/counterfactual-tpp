@@ -6,7 +6,7 @@ from gumbel import posterior_A_star, posterior2
 from sampling_utils import return_samples
 
 
-def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity):
+def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity, params):
     """Samples from the counterfactual intensity given the following:
         - sample: h or the set of all events (i.e., t_is)
         - lambdas: the intensity of the events (i.e, lambda(t_i)s)
@@ -22,7 +22,7 @@ def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity
         ups = []
         for j in range(k):
             post = posterior_A_star(i, lambdas, lambda_max, indicators)
-            pp_1 = new_intensity(sample[i])/lambda_max
+            pp_1 = new_intensity(sample[i], params)/lambda_max
             pp_0 = 1 - pp_1
             up = np.argmax(np.log(np.array([pp_0, pp_1])) + post)
             ups.append(up)
@@ -34,20 +34,20 @@ def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity
     return counterfactuals, counterfactual_indicators
 
 
-def superposition(lambda_max, original_intensity, mean, number_of_samples):
+def superposition(lambda_max, original_intensity, mean, number_of_samples, params):
     """Calculatetes a h_observed and h_rejected
     """
     h_observed = np.sort(return_samples(
         original_intensity, mean=mean, N=number_of_samples))
     lambda_observed = [original_intensity(i) for i in h_observed]
-    lambda_bar = lambda x: lambda_max - original_intensity(x)
+    lambda_bar = lambda x: lambda_max - original_intensity(x, params)
     h_rejected = np.sort(return_samples(
         lambda_bar, mean=mean, N=number_of_samples))
     lambda_bar_rejected = [lambda_bar(i) for i in h_rejected]
     return h_observed, lambda_observed, h_rejected, lambda_bar_rejected
 
 
-def combine(h_observed, lambda_observed, h_rejected, original_intensity):
+def combine(h_observed, lambda_observed, h_rejected, original_intensity, params):
     # combining both observed and rejected
     sample = []
     lambdas = []
@@ -57,7 +57,7 @@ def combine(h_observed, lambda_observed, h_rejected, original_intensity):
         all.append((h_observed[i], lambda_observed[i], True))
     for i in range(len(h_rejected)):
         all.append((h_rejected[i], original_intensity(
-            h_rejected[i]), False))  # IMPORTANT
+            h_rejected[i], params), False))  # IMPORTANT
 
     h = sorted(all, key=lambda x: x[0])
     for i in range(len(h)):
@@ -69,18 +69,4 @@ def combine(h_observed, lambda_observed, h_rejected, original_intensity):
     lambdas = np.array(lambdas)
     return sample, lambdas, indicators
 
-def check_monotonicity(sample, counterfactuals, original_intensity, intervened_intensity, accepted):
-    monotonic = 1
-    for s in sample:
-        if intervened_intensity(s) >= original_intensity(s) and s in accepted:
-            if s not in counterfactuals:
-                print('NOT  MONOTONIC')
-                monotonic = 0
-    for s in sample:
-        if intervened_intensity(s) < original_intensity(s) and s not in accepted:
-            if s in counterfactuals:
-                print('NOT  MONOTONIC')
-                monotonic = 0
-    if monotonic == 1:
-        print('MONOTONIC')
     
