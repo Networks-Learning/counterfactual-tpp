@@ -29,6 +29,29 @@ def thinning(lambdas, lambda_max, sample):
     accepted = np.array(accepted)
     return accepted, indicators
 
+def thinning_T(intensity, lambda_max, max_number_of_samples, T):
+    n = 0
+    indicators = []
+    sample = []
+    next_arrival_time = np.random.exponential(scale=1.0 / lambda_max)
+    sample.append(next_arrival_time)
+    indicators.append(True)
+    n += 1
+    while n < max_number_of_samples:
+        next_arrival_time += np.random.exponential(scale=1.0 / lambda_max)
+
+        if next_arrival_time < T:
+            d = np.random.rand()
+            lambda_s = intensity(next_arrival_time)
+            sample.append(next_arrival_time)
+            if d <= lambda_s / lambda_max:
+                indicators.append(True)
+                n += 1
+            else:
+                indicators.append(False)
+        else:
+            break  
+    return sample, indicators
 
 # INVERSION SAMPLING
 def inverse_sample(g, mean):
