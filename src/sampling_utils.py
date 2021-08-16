@@ -41,12 +41,13 @@ def thinning_T(intensity, lambda_max, max_number_of_samples, T):
         next_arrival_time += np.random.exponential(scale=1.0 / lambda_max)
 
         if next_arrival_time < T:
+            n += 1
             d = np.random.rand()
             lambda_s = intensity(next_arrival_time)
             sample.append(next_arrival_time)
             if d <= lambda_s / lambda_max:
                 indicators.append(True)
-                n += 1
+                # n += 1
             else:
                 indicators.append(False)
         else:
