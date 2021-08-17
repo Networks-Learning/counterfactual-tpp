@@ -82,22 +82,22 @@ def plotHawkes(tevs, l_0, alpha_0, w, T, resolution, label):
 
 ##############################################################
 # Simulation time
-T = 10
+# T = 10
 
-# Maximum number of events per realization
-maxNev = 200
+# # Maximum number of events per realization
+# maxNev = 200
 
-# Base intensity
-lambda_0 = 1
+# # Base intensity
+# lambda_0 = 1
 
-# Self excitation parameter
-alpha_0 = 0.5
+# # Self excitation parameter
+# alpha_0 = 0.5
 
-# Rate of decay
-w = 1
+# # Rate of decay
+# w = 1
 
-tev, tend, lambdas = sampleHawkes(lambda_0, alpha_0, w, T, maxNev)
-plotHawkes(tev, lambda_0, alpha_0, w, T, 10000.0, label='test')
-plt.plot(tev, lambdas, 'r^')
-plt.ion()
-plt.show()  # Show the plot.
+# tev, tend, lambdas = sampleHawkes(lambda_0, alpha_0, w, T, maxNev)
+# plotHawkes(tev, lambda_0, alpha_0, w, T, 10000.0, label='test')
+# plt.plot(tev, lambdas, 'r^')
+# plt.ion()
+# plt.show()  # Show the plot.
