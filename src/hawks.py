@@ -2,6 +2,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+import sys
+sys.path.append(os.path.abspath('..'))
+from sampling_utils import thinning_T
 
 sns.set_style('ticks')
 
@@ -50,6 +54,24 @@ def sampleHawkes(lambda_0, alpha_0, w, T, Nev, seed=None):
     lambdas = hawkes(tev, lambda_0, alpha_0, w)
 
     return tev, Tend, lambdas
+
+def iterative_sampling(all_events, events, mu0, alpha, w, lambda_max, maxNev, T):
+    """Generates samples from a Hawkes process with \mu_0 and \alpha_0 until one of the following happens:
+      - The next generated event is after T
+      - Nev events have been generated.
+    This function uses the Superposition property to sample from the hawkes process.
+    """
+    if True not in events.values():
+        return
+    else:
+        accepted_events = [k for k, v in events.items() if v == True]
+
+        for t_i in accepted_events:
+            def f(t): return alpha * np.exp(-w * (t - t_i))
+            new_sample, indicators = thinning_T(t_i, f, lambda_max, maxNev, T)
+            new_events = {new_sample[i]: indicators[i] for i in range(len(new_sample))}
+            all_events[t_i] = new_events
+            iterative_sampling(all_events, new_events, mu0, alpha, w, lambda_max, maxNev, T)
 
 
 def hawkes(tev, l_0, alpha_0, w):
