@@ -150,7 +150,7 @@ def hawkes_calculate(x, tev, l_0, alpha_0, w):
     return l_0 + alpha_0 * np.sum(np.exp(-w * (x - tev[tev < x])))
 
 
-def plotHawkes(tevs, l_0, alpha_0, w, T, resolution, label):
+def plotHawkes(tevs, l_0, alpha_0, w, T, resolution, label, color, legend):
 
     tvec = np.arange(0, T, step=T / resolution)
 
@@ -162,7 +162,7 @@ def plotHawkes(tevs, l_0, alpha_0, w, T, resolution, label):
 
     plt.plot(tvec, l_t, label=label)
 
-    plt.plot(tevs, np.zeros(len(tevs)), 'r+')
+    plt.plot(tevs, np.zeros(len(tevs)), color, label = legend)
     return tvec, l_t
 
 def check_monotonicity_hawkes(mu0, alpha, new_mu0, new_alpha, all_events, sampled_events, real_counterfactuals, w):
