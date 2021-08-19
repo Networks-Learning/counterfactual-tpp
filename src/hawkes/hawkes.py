@@ -165,7 +165,39 @@ def plotHawkes(tevs, l_0, alpha_0, w, T, resolution, label):
     plt.plot(tevs, np.zeros(len(tevs)), 'r+')
     return tvec, l_t
 
-
+def check_monotonicity_hawkes(mu0, alpha, new_mu0, new_alpha, all_events, sampled_events, real_counterfactuals, w):
+    count = 0
+    monotonic = 1
+    def constant1(x): return mu0
+    def constant2(x): return new_mu0
+    for t_i, events in all_events.items():
+        sample = list(events.keys())
+        if count == 0:
+            for s in sample: 
+                if constant2(s) >= constant1(s) and s in sampled_events:
+                    if s not in real_counterfactuals:
+                        print('NOT  MONOTONIC')
+                        monotonic = 0
+                if constant2(s) < constant1(s) and s not in sampled_events:
+                    if s in real_counterfactuals:
+                        print('NOT  MONOTONIC')
+                        monotonic = 0
+        else:
+            for s in sample:
+                def f(t): return alpha * np.exp(-w * (t - t_i))
+                def g(t): return new_alpha * np.exp(-w * (t - t_i))
+                if g(s) >= f(s) and s in sampled_events:
+                    if s not in real_counterfactuals:
+                        print('NOT  MONOTONIC')
+                        monotonic = 0
+                if g(s) < f(s) and s not in sampled_events:
+                    if s in real_counterfactuals:
+                        print('NOT  MONOTONIC')
+                        monotonic = 0
+        count += 1
+        
+    if monotonic == 1:
+            print('MONOTONIC')
 ##############################################################
 # Simulation time
 # T = 10
