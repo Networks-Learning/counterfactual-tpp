@@ -18,6 +18,6 @@ This code depends on the following packages:
 # Experiments 
 
 ## Synthetic
-`src/hawkes/hawkes.ipynb` and `src/inhomogeneous.ipynb` contain code and result plots for the hawkes process and the gaussian intensities respectively.
+`src/hawkes/hawkes.ipynb` and `src/inhomogeneous/gaussian.ipynb` contain code and result plots for the hawkes process and the gaussian intensities respectively.
 
 ## Epidemiological
