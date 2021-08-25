@@ -84,3 +84,16 @@ def check_monotonicity(sample, counterfactuals, original_intensity, intervened_i
     if monotonic == 1:
         print('MONOTONIC')
     
+def distance(accepted, counterfactuals, T):
+    # Calculates the distance between oserved and counterfactual realizaitons
+    k1 = len(accepted)
+    k2 = len(counterfactuals)
+    if k1 <= k2:
+        d = np.sum(np.abs(accepted[0:k1] - counterfactuals[0:k1]))
+        if k2 - k1 > 0:
+            d += np.sum(np.abs(T - counterfactuals[k1:]))
+    else:
+        d = np.sum(np.abs(accepted[0:k2] - counterfactuals[0:k2]))
+        if k1 - k2 > 0:
+            d += np.sum(np.abs(T - accepted[k2:]))
+    return d
