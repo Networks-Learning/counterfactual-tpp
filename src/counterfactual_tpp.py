@@ -105,7 +105,7 @@ def calculate_N(t, indicators, sample):
             count += 1
     return count
 
-def covariance(sample, indicators, counterfactual_indicators, T, original_intensity, intervened_intensity, lambda_max):
+def covariance(T, original_intensity, intervened_intensity, lambda_max):
     times  = np.linspace(0, T, 20)
     n_realizations = 10
     n_counter = 10
