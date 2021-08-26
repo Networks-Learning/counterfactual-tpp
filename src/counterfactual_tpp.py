@@ -3,7 +3,7 @@ import os
 import sys
 sys.path.append(os.path.abspath('..'))
 from gumbel import posterior_A_star, posterior2
-from sampling_utils import return_samples
+from sampling_utils import return_samples, thinning_T
 
 
 def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity):
@@ -97,3 +97,36 @@ def distance(accepted, counterfactuals, T):
         if k1 - k2 > 0:
             d += np.sum(np.abs(T - accepted[k2:]))
     return d
+
+def calculate_N(t, indicators, sample):
+    count = 0
+    for i in range(len(sample)):
+        if sample[i] <= t and indicators[i] == True:
+            count += 1
+    return count
+
+def covariance(sample, indicators, counterfactual_indicators, T, original_intensity, intervened_intensity, lambda_max):
+    times  = np.linspace(0, T, 20)
+    n_realizations = 10
+    n_counter = 10
+    all = np.zeros(len(times))
+    Ns = np.zeros(len(times))
+    Ms = np.zeros(len(times))
+    for realization in range(n_realizations):
+        sample, indicators = thinning_T(0, intensity=original_intensity, lambda_max=lambda_max, max_number_of_samples=100, T=T)
+        sum_mul = np.zeros(len(times))
+        N = np.array([calculate_N(times[i], indicators, sample) for i in range(len(times))])
+        lambdas = original_intensity(np.asarray(sample))
+        sample = np.asarray(sample)
+        for counter in range(n_counter):
+            counterfactuals, counterfactual_indicators = sample_counterfactual(sample, lambdas, lambda_max, indicators, intervened_intensity)
+            M = np.array([calculate_N(times[i], counterfactual_indicators, sample) for i in range(len(times))])
+            Ms += M
+            sum_mul += M * N
+        all += sum_mul/n_counter
+        Ns += N
+    expected_MN = all/n_realizations
+    expected_N = Ns/n_realizations
+    expected_M = Ms / (n_realizations * n_counter)
+    cov  = expected_MN - expected_M * expected_M
+    return cov
