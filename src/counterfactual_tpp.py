@@ -34,15 +34,13 @@ def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity
     return counterfactuals, counterfactual_indicators
 
 
-def superposition(lambda_max, original_intensity, mean, number_of_samples):
+def superposition(lambda_max, original_intensity, number_of_samples, T):
     """Calculatetes a h_observed and h_rejected
     """
-    h_observed = np.sort(return_samples(
-        original_intensity, mean=mean, N=number_of_samples))
+    h_observed, _ = thinning_T(0, intensity=original_intensity, lambda_max=lambda_max, max_number_of_samples= number_of_samples, T=T)
     lambda_observed = [original_intensity(i) for i in h_observed]
     lambda_bar = lambda x: lambda_max - original_intensity(x)
-    h_rejected = np.sort(return_samples(
-        lambda_bar, mean=mean, N=number_of_samples))
+    h_rejected, _ = thinning_T(0, intensity=lambda_bar, lambda_max=lambda_max, max_number_of_samples= number_of_samples, T=T)
     lambda_bar_rejected = [lambda_bar(i) for i in h_rejected]
     return h_observed, lambda_observed, h_rejected, lambda_bar_rejected
 
@@ -122,8 +120,8 @@ def covariance(T, original_intensity, intervened_intensity, lambda_max):
             counterfactuals, counterfactual_indicators = sample_counterfactual(sample, lambdas, lambda_max, indicators, intervened_intensity)
             M = np.array([calculate_N(times[i], counterfactual_indicators, sample) for i in range(len(times))])
             Ms += M
-            sum_mul += M * N
-        all += sum_mul/n_counter
+            sum_mul += M 
+        all += (sum_mul/n_counter) * N
         Ns += N
     expected_MN = all/n_realizations
     expected_N = Ns/n_realizations
