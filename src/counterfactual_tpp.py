@@ -26,7 +26,7 @@ def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity
             pp_0 = 1 - pp_1
             up = np.argmax(np.log(np.array([pp_0, pp_1])) + post)
             ups.append(up)
-        if sum(ups)/k > 0.5:
+        if sum(ups)/k > np.random.uniform(0, 1):
             counterfactuals.append(sample[i])
             counterfactual_indicators.append(True)
         else:
@@ -105,8 +105,8 @@ def calculate_N(t, indicators, sample):
 
 def covariance(T, original_intensity, intervened_intensity, lambda_max):
     times  = np.linspace(0, T, 20)
-    n_realizations = 10
-    n_counter = 10
+    n_realizations = 100
+    n_counter = 100
     all = np.zeros(len(times))
     Ns = np.zeros(len(times))
     Ms = np.zeros(len(times))
