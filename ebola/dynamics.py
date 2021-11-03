@@ -664,7 +664,7 @@ class SimulationSIR(object):
             new_beta: the new beta value (for the vaccination policy)
             G_prime: the graph for which the counterfactual infection and recovery times are calculated 
             (Can be the same as initial graph or different in graph isolation)
-            assersion_time: the time at which the intervention is assumed to have happened
+            intervention_time: the time at which the intervention is assumed to have happened
             vaccine: the vaccine policy
         """
     # initializing the counterfactual queue with seed nodes
