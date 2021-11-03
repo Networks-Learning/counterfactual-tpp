@@ -16,7 +16,7 @@ import heapq
 import collections
 import itertools
 import os
-
+import copy
 from counterfactual_tpp import sample_counterfactual, superposition, combine
 from sampling_utils import thinning_T
 # from . import maxcut
@@ -657,35 +657,64 @@ class SimulationSIR(object):
         # Free memory
         del self.queue
 
-    def calculate_counterfactual(self, new_beta, G_prime):
-        # initializing the counterfactual queue with seed nodes
-        seeds = np.array(self.G.nodes())[self.initial_seed]
-        seed_priorities = self.inf_occured_at[self.initial_seed]
+    def calculate_counterfactual(self, new_beta, G_prime, intervention_time = 0, vaccine = np.array([])):
+        """
+        Calculate the counterfactual infection and recovery times for the given intervention.
+        input:
+            new_beta: the new beta value (for the vaccination policy)
+            G_prime: the graph for which the counterfactual infection and recovery times are calculated 
+            (Can be the same as initial graph or different in graph isolation)
+            assersion_time: the time at which the intervention is assumed to have happened
+            vaccine: the vaccine policy
+        """
+    # initializing the counterfactual queue with seed nodes
+        seeds = []
+        seed_priorities = []
+        processed = np.zeros(self.n_nodes, dtype = 'bool')
+        for node in self.G.nodes():
+            node_id = self.node_to_idx[node]
+            if self.inf_occured_at[node_id] <= intervention_time and self.rec_occured_at[node_id] > intervention_time:
+                seeds.append(node)
+                seed_priorities.append(intervention_time)
+            if self.rec_occured_at[node_id] <= intervention_time:
+                processed[node_id] = True
+        seeds = np.array(seeds)
+        seed_priorities = np.array(seed_priorities)
         self.cf_queue = PriorityQueue(initial=seeds, priorities=seed_priorities)
+        general_processed = copy.deepcopy(processed)
         beta_max = max(self.beta, new_beta)
         # initializing the counterfactual infection and recovery times
-        self.processed = np.zeros(self.n_nodes, dtype = 'bool')
         self.cf_inf = np.zeros(self.n_nodes)
         self.cf_rec = np.zeros(self.n_nodes)
         self.cf_infector = np.full(self.n_nodes, -1)
         for node in self.G.nodes():
             node_id = self.node_to_idx[node]
-            if self.initial_seed[node_id]:
-                self.cf_inf[node_id] = 0
-                self.cf_rec[node_id] = self.cf_inf[node_id] + self.expo(self.delta)
+            if general_processed[node_id]:
+                self.cf_inf[node_id] = self.inf_occured_at[node_id]
+                self.cf_rec[node_id] = self.rec_occured_at[node_id]
             else:
-                self.cf_inf[node_id]= np.inf
+                if node in seeds:
+                    self.cf_inf[node_id] = intervention_time
+                    self.cf_rec[node_id] = self.cf_inf[node_id] + self.expo(self.delta)
+                else:
+                    self.cf_inf[node_id]= np.inf
         # processing nodes in order and calculate their counterfctual inf and rec times
         while self.cf_queue:
             node, _ = self.cf_queue.pop_priority()
             node_id = self.node_to_idx[node]
-            if not self.processed[node_id]:
-                self.processed[node_id] = True
+            if not processed[node_id]:
+                processed[node_id] = True
                 for neighbor in G_prime.neighbors(node):
                     neighbor_id = self.node_to_idx[neighbor]
+                    if general_processed[neighbor_id]:
+                        continue
                     def gamma2(t):
-                        if t == self.cf_inf[node_id] or t == self.cf_rec[node_id]: return 1 * new_beta
-                        return new_beta * np.heaviside(t - self.cf_inf[node_id], 1) - new_beta * np.heaviside(t - self.cf_rec[node_id], 0)
+                        if len(vaccine) == 0 or vaccine[neighbor_id] == True:
+                            g_beta = new_beta
+                        else:
+                            g_beta = self.beta
+                        if t == self.cf_inf[node_id] or t == self.cf_rec[node_id]: return 1 * g_beta
+                        return g_beta * np.heaviside(t - self.cf_inf[node_id], 1) - g_beta * np.heaviside(t - self.cf_rec[node_id], 0)
                     if self.infector[neighbor_id] == node_id:
                         t_inf = self.inf_occured_at[neighbor_id]
                         def gamma1(t):
@@ -716,3 +745,8 @@ class SimulationSIR(object):
         for rec_time in self.cf_rec:
             if rec_time > self.max_time:
                 rec_time = np.inf
+        # check this later.
+        for node in self.G.nodes():
+            if node in seeds:
+                node_id = self.node_to_idx[node]
+                self.cf_inf[node_id] = self.inf_occured_at[node_id]
