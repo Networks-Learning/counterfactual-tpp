@@ -10,25 +10,6 @@ def homogenous_poisson(mu, t_previous):
     return t
 
 
-def thinning(lambdas, lambda_max, sample):
-    """Samples from the original intensity given the following:
-        - sample: h or the set of all events (i.e., t_is)
-        - lambdas: the intensity of the events (i.e, lambda(t_i)s)
-        - lambda_max
-    Returns: a sample from the original intensity
-    """
-    indicators = []
-    accepted = []
-    for i in range(len(lambdas)):
-        u = np.random.uniform(0, 1)
-        if lambdas[i]/lambda_max > u:
-            accepted.append(sample[i])
-            indicators.append(True)
-        else:
-            indicators.append(False)
-    accepted = np.array(accepted)
-    return accepted, indicators
-
 def thinning_T(start, intensity, lambda_max, T):
     n = 0
     indicators = []
@@ -50,6 +31,19 @@ def thinning_T(start, intensity, lambda_max, T):
         else:
             break  
     return sample, indicators
+
+def thinning(lambdas, lambda_max, sample):
+    indicators = []
+    accepted = []
+    for i in range(len(lambdas)):
+        u = np.random.uniform(0, 1)
+        if lambdas[i]/lambda_max > u:
+            accepted.append(sample[i])
+            indicators.append(True)
+        else:
+            indicators.append(False)
+    accepted = np.array(accepted)
+    return accepted, indicators
 
 # INVERSION SAMPLING
 def inverse_sample(g, mean):
