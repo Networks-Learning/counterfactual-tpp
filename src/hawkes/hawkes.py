@@ -56,7 +56,7 @@ def sampleHawkes(lambda_0, alpha_0, w, T, Nev, seed=None):
     return tev, Tend, lambdas
 
 
-def iterative_sampling(all_events, events, mu0, alpha, w, lambda_max, maxNev, T):
+def iterative_sampling(all_events, events, mu0, alpha, w, lambda_max, T):
     """Generates samples from a Hawkes process with \mu_0 and \alpha_0 until one of the following happens:
       - The next generated event is after T
       - Nev events have been generated.
@@ -69,12 +69,12 @@ def iterative_sampling(all_events, events, mu0, alpha, w, lambda_max, maxNev, T)
 
         for t_i in accepted_events:
             def f(t): return alpha * np.exp(-w * (t - t_i))
-            new_sample, indicators = thinning_T(t_i, f, lambda_max, maxNev, T)
+            new_sample, indicators = thinning_T(t_i, f, lambda_max, T)
             new_events = {new_sample[i]: indicators[i]
                           for i in range(len(new_sample))}
             all_events[t_i] = new_events
             iterative_sampling(all_events, new_events, mu0,
-                               alpha, w, lambda_max, maxNev, T)
+                               alpha, w, lambda_max, T)
 
 
 def extract_samples(all_events, sampled_events, mu0, alpha, w):
@@ -90,7 +90,7 @@ def extract_samples(all_events, sampled_events, mu0, alpha, w):
     return all_samples, all_lambdas
 
 
-def sample_counterfactual_superposition(mu0, alpha, new_mu0, new_alpha, all_events, lambda_max, maxNev, w, T):
+def sample_counterfactual_superposition(mu0, alpha, new_mu0, new_alpha, all_events, lambda_max, w, T):
     """Generates samples from the counterfactual intensity, and return the counterfactuals.
     This is done in 3 steps:
         1. First we calculate the counterfactual basedon the history in each exponential (created by superposiiton.).
@@ -125,7 +125,7 @@ def sample_counterfactual_superposition(mu0, alpha, new_mu0, new_alpha, all_even
 
     new_events = {}
     iterative_sampling(new_events, rej_acc_events, new_mu0,
-                       new_alpha, w, lambda_max, maxNev, T)
+                       new_alpha, w, lambda_max, T)
     # These are the additional counterfactuals sampled from the new intensity.
     sampled_counterfactuals = list(new_events.keys())
     sampled_counterfactuals.sort()
@@ -158,7 +158,8 @@ def plotHawkes(tevs, l_0, alpha_0, w, T, resolution, label, color, legend):
     l_t = np.zeros(len(tvec))
     for t in tvec:
         n += 1
-        l_t[n] = l_0 + alpha_0 * np.sum(np.exp(-w * (t - tevs[tevs < t])))
+        m = l_0(t)
+        l_t[n] = m + alpha_0 * np.sum(np.exp(-w * (t - tevs[tevs < t])))
 
     plt.plot(tvec, l_t, label=label)
 
@@ -176,11 +177,11 @@ def check_monotonicity_hawkes(mu0, alpha, new_mu0, new_alpha, all_events, sample
             for s in sample: 
                 if constant2(s) >= constant1(s) and s in sampled_events:
                     if s not in real_counterfactuals:
-                        print('NOT  MONOTONIC')
+                        return('NOT  MONOTONIC')
                         monotonic = 0
                 if constant2(s) < constant1(s) and s not in sampled_events:
                     if s in real_counterfactuals:
-                        print('NOT  MONOTONIC')
+                        return('NOT  MONOTONIC')
                         monotonic = 0
         else:
             for s in sample:
@@ -188,16 +189,16 @@ def check_monotonicity_hawkes(mu0, alpha, new_mu0, new_alpha, all_events, sample
                 def g(t): return new_alpha * np.exp(-w * (t - t_i))
                 if g(s) >= f(s) and s in sampled_events:
                     if s not in real_counterfactuals:
-                        print('NOT  MONOTONIC')
+                        return('NOT  MONOTONIC')
                         monotonic = 0
                 if g(s) < f(s) and s not in sampled_events:
                     if s in real_counterfactuals:
-                        print('NOT  MONOTONIC')
+                        return('NOT  MONOTONIC')
                         monotonic = 0
         count += 1
         
     if monotonic == 1:
-            print('MONOTONIC')
+            return('MONOTONIC')
 ##############################################################
 # Simulation time
 # T = 10
