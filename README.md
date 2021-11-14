@@ -1,5 +1,5 @@
 # counterfactual-ttp
-This is a repository containing code the Counterfactual Temporal Point Processes.
+This is a repository containing code for the Counterfactual Temporal Point Processes.
 ## Pre-requisites
 
 This code depends on the following packages:
