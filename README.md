@@ -31,6 +31,8 @@ The directory [ebola/data/ebola](https://github.com/Networks-Learning/counterfac
 
 The directory [ebola/map/geojson](https://github.com/Networks-Learning/counterfactual-ttp/tree/main/ebola/map/geojson) contains the geographical information of the districts studied in the Ebola outbreak dataset. The geojson files are obtained from [Nominatim](https://nominatim.openstreetmap.org/ui/search.html).
 
+The directory [ebola/map/overall_data](https://github.com/Networks-Learning/counterfactual-ttp/tree/main/ebola/map/overall_data) contains data for generating the geographical maps in the paper, and includs the overall number of infection under applying different interventions.
+
 The directories [src/data_hawkes](https://github.com/Networks-Learning/counterfactual-ttp/tree/main/src/data_hawkes) and [src/data_inhomogeneous](https://github.com/Networks-Learning/counterfactual-ttp/tree/main/src/data_inhomogeneous) contain observational data used to generate Synthetic plots in the paper. You can use this data to re-generate paper's plots. Otherwise, you can simply generate new random samples by the code.
 
 ## Experiments 
