@@ -2,8 +2,8 @@ import numpy as np
 import os
 import sys
 sys.path.append(os.path.abspath('..'))
-from gumbel import posterior_A_star, posterior2
-from sampling_utils import return_samples, thinning_T
+from gumbel import posterior_A_star
+from sampling_utils import thinning_T
 
 
 def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity):
