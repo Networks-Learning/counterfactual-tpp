@@ -20,10 +20,10 @@ def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity
     k = 100
     for i in range(len(sample)):
         ups = []
+        pp_1 = new_intensity(sample[i])/lambda_max
+        pp_0 = 1 - pp_1
         for j in range(k):
             post = posterior_A_star(i, lambdas, lambda_max, indicators)
-            pp_1 = new_intensity(sample[i])/lambda_max
-            pp_0 = 1 - pp_1
             up = np.argmax(np.log(np.array([pp_0, pp_1])) + post)
             ups.append(up)
         if sum(ups)/k > np.random.uniform(0, 1):
@@ -72,15 +72,15 @@ def check_monotonicity(sample, counterfactuals, original_intensity, intervened_i
     for s in sample:
         if intervened_intensity(s) >= original_intensity(s) and s in accepted:
             if s not in counterfactuals:
-                print('NOT  MONOTONIC')
+                return 'NOT  MONOTONIC'
                 monotonic = 0
     for s in sample:
         if intervened_intensity(s) < original_intensity(s) and s not in accepted:
             if s in counterfactuals:
-                print('NOT  MONOTONIC')
+                return 'NOT  MONOTONIC'
                 monotonic = 0
     if monotonic == 1:
-        print('MONOTONIC')
+        return 'MONOTONIC'
     
 def distance(accepted, counterfactuals, T):
     # Calculates the distance between oserved and counterfactual realizaitons
