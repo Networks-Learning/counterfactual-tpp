@@ -6,12 +6,14 @@ This code depends on the following packages:
 
  1. [`netwrokx`](https://networkx.org/)
  2. `numpy`
- 3. `matplotlib`
+ 3. `pandas`
+ 4. `matplotlib`
+ 
  
  to generate map plots:
  
- 4. [`GeoPandas`](https://geopandas.org/)
- 5. `geoplot`
+ 5. [`GeoPandas`](https://geopandas.org/)
+ 6. `geoplot`
 
 ## Code structure
 
