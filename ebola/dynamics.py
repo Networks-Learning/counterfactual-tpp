@@ -17,7 +17,7 @@ import collections
 import itertools
 import os
 import copy
-from counterfactual_tpp import sample_counterfactual, superposition, combine
+from counterfactual_tpp import sample_counterfactual, combine
 from sampling_utils import thinning_T
 # from . import maxcut
 from settings import DATA_DIR
