@@ -29,12 +29,12 @@ def thinning(lambdas, lambda_max, sample):
     accepted = np.array(accepted)
     return accepted, indicators
 
-def thinning_T(start, intensity, lambda_max, max_number_of_samples, T):
+def thinning_T(start, intensity, lambda_max, T):
     n = 0
     indicators = []
     sample = []
     next_arrival_time = start
-    while n < max_number_of_samples:
+    while True:
         next_arrival_time += np.random.exponential(scale=1.0 / lambda_max)
 
         if next_arrival_time < T:
