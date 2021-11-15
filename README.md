@@ -4,7 +4,7 @@ This is a repository containing code for the Counterfactual Temporal Point Proce
 
 This code depends on the following packages:
 
- 1. [`netwrokx`](https://networkx.org/)
+ 1. [`networkx`](https://networkx.org/)
  2. `numpy`
  3. `pandas`
  4. `matplotlib`
