@@ -1,5 +1,5 @@
 # counterfactual-tpp
-This is a repository containing code for the Counterfactual Temporal Point Processes.
+This is a repository containing code for the paper [`"Counterfactual Temporal Point Processes"`](#).
 ## Pre-requisites
 
 This code depends on the following packages:
@@ -46,4 +46,11 @@ The directories [src/data_hawkes](https://github.com/Networks-Learning/counterfa
 - [Generate Geographical Distribution of infections](https://github.com/Networks-Learning/counterfactual-tpp/blob/main/ebola/map/generate_geopands_data.ipynb)
 
 ## Citation
-If you use parts of the code in this repository for your own research, please consider citing.
+If you use parts of the code in this repository for your own research, please consider citing:
+
+@article{noorbakhsh2021counterfactual,
+        title={Counterfactual Temporal Point Processes},
+        author={Noorbakhsh, Kimia and Gomez-Rodriguez, Manuel},
+        year={2021}
+}
+
