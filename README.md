@@ -1,5 +1,5 @@
 # counterfactual-tpp
-This is a repository containing code for the paper [`Counterfactual Temporal Point Processes`](#).
+This is a repository containing code and real data for the paper [`Counterfactual Temporal Point Processes`](#).
 ## Pre-requisites
 
 This code depends on the following packages:
