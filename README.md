@@ -52,6 +52,7 @@ If you use parts of the code in this repository for your own research, please co
 @article{noorbakhsh2021counterfactual,
         title={Counterfactual Temporal Point Processes},
         author={Noorbakhsh, Kimia and Gomez-Rodriguez, Manuel},
+        journal={arXiv preprint arXiv:2111.07603}
         year={2021}
 }
 ```
