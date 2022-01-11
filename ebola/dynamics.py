@@ -1,8 +1,3 @@
-"""
-epidemic_helper.py: Helper module to simulate continuous-time stochastic
-SIR epidemics.
-Copyright © 2018 — LCA 4
-"""
 import time
 import bisect
 import numpy as np

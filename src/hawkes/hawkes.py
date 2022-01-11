@@ -1,4 +1,3 @@
-# some parts are taken from: https://github.com/Networks-Learning/jetbrains-seminar-2019/blob/hawkes-solution/hawkes/simPointProcess_solution.py
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
