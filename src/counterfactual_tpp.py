@@ -17,7 +17,7 @@ def sample_counterfactual(sample, lambdas, lambda_max, indicators, new_intensity
     """
     counterfactuals = []
     counterfactual_indicators = []
-    k = 100
+    k = 25
     for i in range(len(sample)):
         ups = []
         pp_1 = new_intensity(sample[i])/lambda_max
