@@ -15,6 +15,10 @@ This code depends on the following packages:
  5. [`GeoPandas`](https://geopandas.org/)
  6. `geoplot`
 
+In order to install the project dependencies you can run the following command:
+```bash
+pip install -r requirements.txt
+```
 ## Code structure
 
  - [src/counterfactual_tpp.py:](https://github.com/Networks-Learning/counterfactual-tpp/blob/main/src/counterfactual_tpp.py) Contains the code to sample rejected events using the superposition property and the algorithm to calculate the counterfactuals.
