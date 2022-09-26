@@ -1,5 +1,5 @@
 # counterfactual-tpp
-This is a repository containing code and real data for the paper [Counterfactual Temporal Point Processes](https://arxiv.org/abs/2111.07603).
+This is a repository containing code and real data for the paper [Counterfactual Temporal Point Processes](https://arxiv.org/abs/2111.07603), published at NeurIPS 2022.
 ## Pre-requisites
 
 This code depends on the following packages:
@@ -53,11 +53,11 @@ The directories [src/data_hawkes](https://github.com/Networks-Learning/counterfa
 If you use parts of the code in this repository for your own research, please consider citing:
 
 ```
-@article{noorbakhsh2021counterfactual,
+@inproceedings{noorbakhsh2022counterfactual,
         title={Counterfactual Temporal Point Processes},
         author={Noorbakhsh, Kimia and Gomez-Rodriguez, Manuel},
-        journal={arXiv preprint arXiv:2111.07603},
-        year={2021}
+        booktitle={Neural Information Processing Systems (NeurIPS)},
+        year={2022}
 }
 ```
 
