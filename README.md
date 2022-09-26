@@ -56,7 +56,7 @@ If you use parts of the code in this repository for your own research, please co
 @inproceedings{noorbakhsh2022counterfactual,
         title={Counterfactual Temporal Point Processes},
         author={Noorbakhsh, Kimia and Gomez-Rodriguez, Manuel},
-        booktitle={Neural Information Processing Systems (NeurIPS)},
+        booktitle={Advances in Neural Information Processing Systems},
         year={2022}
 }
 ```
